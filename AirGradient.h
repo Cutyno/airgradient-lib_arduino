@@ -13,6 +13,7 @@
 
 #include "PMS.h"
 #include "SHT.h"
+#include "CO2.h"
 
 //MHZ19 CONSTANTS START
 // types of sensors.
@@ -26,13 +27,6 @@ extern const int STATUS_INCOMPLETE;
 extern const int STATUS_NOT_READY;
 //MHZ19 CONSTANTS END
 
-//ENUMS STRUCTS FOR CO2 START
-    struct CO2_READ_RESULT {
-    int co2 = -1;
-    bool success = false;
-};
-//ENUMS STRUCTS FOR CO2 END
-
 // library interface description
 class AirGradient
 {
@@ -44,26 +38,15 @@ class AirGradient
 
     void PMS_Init(bool displayMsg=false, int rx_pin=D5, int tx_pin=D6, uint16 baudRate=9600);
     void SHT_Init(uint8_t adress, bool displayMsg=false);
-    void beginCO2(void);
-    void beginCO2(int,int);
+    void CO2_Init(int rx_pin=D4, int tx_pin=D3, int baudRate=9600, bool displayMsg=false);
 
     bool _debugMsg;
 
     PMS pms;
     SHT sht;
+    CO2 co2;
 
     static const uint16_t BAUD_RATE = 9600;
-
-
-    //CO2 VARIABLES PUBLIC START
-    void CO2_Init();
-    void CO2_Init(int,int);
-    void CO2_Init(int,int,int);
-    const char* getCO2(int retryLimit = 5);
-    int getCO2_Raw();
-    SoftwareSerial *_SoftSerial_CO2;
-
-    //CO2 VARIABLES PUBLIC END
 
     //MHZ19 VARIABLES PUBLIC START
     void MHZ19_Init(uint8_t);
@@ -83,10 +66,6 @@ class AirGradient
   private:
     int value;
 
-    //CO2 VARABLES PUBLIC START
-    char Char_CO2[10];
-
-    //CO2 VARABLES PUBLIC END
     //MHZ19 VARABLES PUBLIC START
 
     int readInternal_MHZ19();
