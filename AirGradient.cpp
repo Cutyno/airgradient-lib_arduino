@@ -82,6 +82,21 @@ void AirGradient::PMS_Init(int rx_pin,int tx_pin,int baudRate){
 
 
 
+const char* AirGradient::getPM1(){
+  if (getPM1_Raw()) {
+    int result_raw = getPM1_Raw();
+    sprintf(Char_PM2,"%d", result_raw);
+    return Char_PM2;
+  } else {
+    //Serial.println("no PMS data");
+    Char_PM2[0] = 'N';
+    Char_PM2[1] = 'U';
+    Char_PM2[2] = 'L';
+    Char_PM2[3] = 'L';
+    return Char_PM2;
+  }
+}
+
 const char* AirGradient::getPM2(){
   if (getPM2_Raw()) {
     int result_raw = getPM2_Raw();
@@ -97,12 +112,51 @@ const char* AirGradient::getPM2(){
   }
 }
 
+const char* AirGradient::getPM10(){
+  if (getPM10_Raw()) {
+    int result_raw = getPM10_Raw();
+    sprintf(Char_PM2,"%d", result_raw);
+    return Char_PM2;
+  } else {
+    //Serial.println("no PMS data");
+    Char_PM2[0] = 'N';
+    Char_PM2[1] = 'U';
+    Char_PM2[2] = 'L';
+    Char_PM2[3] = 'L';
+    return Char_PM2;
+  }
+}
+
+int AirGradient::getPM1_Raw(){
+  int pm02;
+  DATA data;
+  requestRead();
+  if (readUntil(data)) {
+    pm02 = data.PM_AE_UG_1_0;
+    return pm02;
+  } else {
+    return 0;
+  }
+}
+
 int AirGradient::getPM2_Raw(){
   int pm02;
   DATA data;
   requestRead();
   if (readUntil(data)) {
     pm02 = data.PM_AE_UG_2_5;
+    return pm02;
+  } else {
+    return 0;
+  }
+}
+
+int AirGradient::getPM10_Raw(){
+  int pm02;
+  DATA data;
+  requestRead();
+  if (readUntil(data)) {
+    pm02 = data.PM_AE_UG_10_0;
     return pm02;
   } else {
     return 0;
