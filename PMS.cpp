@@ -15,26 +15,26 @@
 
 PMS::PMS(bool displayMsg, int rx_pin, int tx_pin, uint16 baudRate)
 {
-    _debugMsg = displayMsg;
+  _debugMsg = displayMsg;
+  if (_debugMsg)
+  {
+    Serial.println("Initializing PMS...");
+  }
+  _SoftSerial_PMS = new SoftwareSerial(rx_pin, tx_pin);
+  this->_stream = _SoftSerial_PMS;
+  _SoftSerial_PMS->begin(baudRate);
+  if (getPM2() <= 0)
+  {
     if (_debugMsg)
     {
-        Serial.println("Initializing PMS...");
+      Serial.println("PMS Sensor Failed to Initialize ");
     }
-    _SoftSerial_PMS = new SoftwareSerial(rx_pin, tx_pin);
-    this->_stream = _SoftSerial_PMS;
-    _SoftSerial_PMS->begin(baudRate);
-    if (getPM2() <= 0)
-    {
-        if (_debugMsg)
-        {
-            Serial.println("PMS Sensor Failed to Initialize ");
-        }
-        else
-        {
-            Serial.println("PMS Successfully Initialized. Heating up for 10s");
-            delay(10000);
-        }
-    }
+  }
+  else
+  {
+    Serial.println("PMS Successfully Initialized. Heating up for 10s");
+    delay(10000);
+  }
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -42,117 +42,117 @@ PMS::PMS(bool displayMsg, int rx_pin, int tx_pin, uint16 baudRate)
 
 const char *PMS::getPM1()
 {
-    int result_raw;
-    if (result_raw = getPM1_Raw())
-    {
-        sprintf(Char_PM, "%d", result_raw);
-    }
-    else
-    {
-        Serial.println("no PMS data");
-        Char_PM[0] = 'N';
-        Char_PM[1] = 'U';
-        Char_PM[2] = 'L';
-        Char_PM[3] = 'L';
-        Char_PM[4] = '\0';
-    }
-    return Char_PM;
+  int result_raw;
+  if (result_raw = getPM1_Raw())
+  {
+    sprintf(Char_PM, "%d", result_raw);
+  }
+  else
+  {
+    Serial.println("no PMS data");
+    Char_PM[0] = 'N';
+    Char_PM[1] = 'U';
+    Char_PM[2] = 'L';
+    Char_PM[3] = 'L';
+    Char_PM[4] = '\0';
+  }
+  return Char_PM;
 }
 
 const char *PMS::getPM2()
 {
-    int result_raw;
-    if (result_raw = getPM2_Raw())
-    {
-        sprintf(Char_PM, "%d", result_raw);
-    }
-    else
-    {
-        Serial.println("no PMS data");
-        Char_PM[0] = 'N';
-        Char_PM[1] = 'U';
-        Char_PM[2] = 'L';
-        Char_PM[3] = 'L';
-        Char_PM[4] = '\0';
-    }
-    return Char_PM;
+  int result_raw;
+  if (result_raw = getPM2_Raw())
+  {
+    sprintf(Char_PM, "%d", result_raw);
+  }
+  else
+  {
+    Serial.println("no PMS data");
+    Char_PM[0] = 'N';
+    Char_PM[1] = 'U';
+    Char_PM[2] = 'L';
+    Char_PM[3] = 'L';
+    Char_PM[4] = '\0';
+  }
+  return Char_PM;
 }
 
 const char *PMS::getPM10()
 {
-    int result_raw;
-    if (result_raw = getPM10_Raw())
-    {
-        sprintf(Char_PM, "%d", result_raw);
-    }
-    else
-    {
-        Serial.println("no PMS data");
-        Char_PM[0] = 'N';
-        Char_PM[1] = 'U';
-        Char_PM[2] = 'L';
-        Char_PM[3] = 'L';
-        Char_PM[4] = '\0';
-    }
-    return Char_PM;
+  int result_raw;
+  if (result_raw = getPM10_Raw())
+  {
+    sprintf(Char_PM, "%d", result_raw);
+  }
+  else
+  {
+    Serial.println("no PMS data");
+    Char_PM[0] = 'N';
+    Char_PM[1] = 'U';
+    Char_PM[2] = 'L';
+    Char_PM[3] = 'L';
+    Char_PM[4] = '\0';
+  }
+  return Char_PM;
 }
 
 int PMS::getPM1_Raw()
 {
-    DATA data;
-    requestRead();
-    if (readUntil(data))
-    {
-        return data.PM_AE_UG_1_0;
-    }
-    return 0;
+  DATA data;
+  requestRead();
+  if (readUntil(data))
+  {
+    return data.PM_AE_UG_1_0;
+  }
+  return 0;
 }
 
 int PMS::getPM2_Raw()
 {
-    DATA data;
-    requestRead();
-    if (readUntil(data))
-    {
-        return data.PM_AE_UG_2_5;
-    }
-    return 0;
+  DATA data;
+  requestRead();
+  if (readUntil(data))
+  {
+    return data.PM_AE_UG_2_5;
+  }
+  return 0;
 }
 
 int PMS::getPM10_Raw()
 {
-    DATA data;
-    requestRead();
-    if (readUntil(data))
-    {
-        return data.PM_AE_UG_10_0;
-    }
-    return 0;
+  DATA data;
+  requestRead();
+  if (readUntil(data))
+  {
+    return data.PM_AE_UG_10_0;
+  }
+  return 0;
 }
 
 // Private Methods /////////////////////////////////////////////////////////////
 // Functions only available to other functions in this library
 
-//START PMS FUNCTIONS //
+// START PMS FUNCTIONS //
 
 // Standby mode. For low power consumption and prolong the life of the sensor.
 void PMS::sleep()
 {
-  uint8_t command[] = { 0x42, 0x4D, 0xE4, 0x00, 0x00, 0x01, 0x73 };
+  uint8_t command[] = {0x42, 0x4D, 0xE4, 0x00, 0x00, 0x01, 0x73};
   _stream->write(command, sizeof(command));
 }
 
 // Operating mode. Stable data should be got at least 30 seconds after the sensor wakeup from the sleep mode because of the fan's performance.
 void PMS::wakeUp()
 {
-  uint8_t command[] = { 0x42, 0x4D, 0xE4, 0x00, 0x01, 0x01, 0x74 };
+  uint8_t command[] = {0x42, 0x4D, 0xE4, 0x00, 0x01, 0x01, 0x74};
   _stream->write(command, sizeof(command));
 }
 
 // Active mode. Default mode after power up. In this mode sensor would send serial data to the host automatically.
 void PMS::activeMode()
 {
-  uint8_t command[] = { 0x42, 0x4D, 0xE1, 0x00, 0x01, 0x01, 0x71 };
+  uint8_t command[] = {0x42, 0x4D, 0xE1, 0x00, 0x01, 0x01, 0x71};
   _stream->write(command, sizeof(command));
   _mode = MODE_ACTIVE;
 }
@@ -160,7 +160,7 @@ void PMS::activeMode()
 // Passive mode. In this mode sensor would send serial data to the host only for request.
 void PMS::passiveMode()
 {
-  uint8_t command[] = { 0x42, 0x4D, 0xE1, 0x00, 0x00, 0x01, 0x70 };
+  uint8_t command[] = {0x42, 0x4D, 0xE1, 0x00, 0x00, 0x01, 0x70};
   _stream->write(command, sizeof(command));
   _mode = MODE_PASSIVE;
 }
@@ -170,29 +170,30 @@ void PMS::requestRead()
 {
   if (_mode == MODE_PASSIVE)
   {
-    uint8_t command[] = { 0x42, 0x4D, 0xE2, 0x00, 0x00, 0x01, 0x71 };
+    uint8_t command[] = {0x42, 0x4D, 0xE2, 0x00, 0x00, 0x01, 0x71};
     _stream->write(command, sizeof(command));
   }
 }
 
 // Non-blocking function for parse response.
-bool PMS::read_PMS(DATA& data)
+bool PMS::read_PMS(DATA &data)
 {
   _data = &data;
   loop();
-  
+
   return _PMSstatus == STATUS_OK;
 }
 
 // Blocking function for parse response. Default timeout is 1s.
-bool PMS::readUntil(DATA& data, uint16_t timeout)
+bool PMS::readUntil(DATA &data, uint16_t timeout)
 {
   _data = &data;
   uint32_t start = millis();
   do
   {
     loop();
-    if (_PMSstatus == STATUS_OK) break;
+    if (_PMSstatus == STATUS_OK)
+      break;
   } while (millis() - start < timeout);
 
   return _PMSstatus == STATUS_OK;
@@ -286,4 +287,4 @@ void PMS::loop()
   }
 }
 
-//END PMS FUNCTIONS //
+// END PMS FUNCTIONS //
