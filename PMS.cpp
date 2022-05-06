@@ -42,9 +42,9 @@ PMS::PMS(bool displayMsg, int rx_pin, int tx_pin, uint16 baudRate)
 
 const char *PMS::getPM1()
 {
-    if (getPM1_Raw())
+    int result_raw;
+    if (result_raw = getPM1_Raw())
     {
-        int result_raw = getPM1_Raw();
         sprintf(Char_PM, "%d", result_raw);
     }
     else
@@ -61,9 +61,9 @@ const char *PMS::getPM1()
 
 const char *PMS::getPM2()
 {
-    if (getPM2_Raw())
+    int result_raw;
+    if (result_raw = getPM2_Raw())
     {
-        int result_raw = getPM2_Raw();
         sprintf(Char_PM, "%d", result_raw);
     }
     else
@@ -80,9 +80,9 @@ const char *PMS::getPM2()
 
 const char *PMS::getPM10()
 {
-    if (getPM10_Raw())
+    int result_raw;
+    if (result_raw = getPM10_Raw())
     {
-        int result_raw = getPM10_Raw();
         sprintf(Char_PM, "%d", result_raw);
     }
     else
