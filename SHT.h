@@ -126,10 +126,15 @@ typedef union
     };
 } TMP_RH_RegisterStatus;
 
-struct TMP_RH
+struct TMP_RH_raw
 {
     float t;
     int rh;
+    TMP_RH_ErrorCode error;
+};
+
+struct TMP_RH
+{
     char t_char[10];
     char rh_char[10];
     TMP_RH_ErrorCode error;
@@ -163,6 +168,7 @@ class SHT
 
         TMP_RH_ErrorCode periodicStart(TMP_RH_Repeatability repeatability, TMP_RH_Frequency frequency);
         TMP_RH periodicFetchData(void);
+        TMP_RH_raw periodicFetchData_raw(void);
         TMP_RH_ErrorCode periodicStop(void);
 
         //TMP_RH VARIABLES PUBLIC END
@@ -184,10 +190,11 @@ class SHT
         float calculateHumidity(uint16_t rawValue);
         float calculateTemperature(uint16_t rawValue);
 
-        TMP_RH readTemperatureAndHumidity();
+        TMP_RH_raw readTemperatureAndHumidity();
         TMP_RH_ErrorCode read_TMP_RH(uint16_t* data, uint8_t numOfPair);
 
         TMP_RH returnError(TMP_RH_ErrorCode command);
+        TMP_RH_raw returnError_raw(TMP_RH_ErrorCode command);
         //TMP_RH VARIABLES PRIVATE END
 };
 

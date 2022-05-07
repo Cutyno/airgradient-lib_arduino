@@ -34,19 +34,32 @@ TMP_RH_ErrorCode SHT::reset()
     return  softReset();
 }
 
-TMP_RH SHT::periodicFetchData() //
+TMP_RH SHT::periodicFetchData()
 {
     TMP_RH result;
+    TMP_RH_raw sensor;
     TMP_RH_ErrorCode error = writeCommand(SHT3XD_CMD_FETCH_DATA);
     if (error == SHT3XD_NO_ERROR)
     {
-        result = readTemperatureAndHumidity();
-        sprintf(result.t_char,"%d", result.t);
-        sprintf(result.rh_char,"%f", result.rh);
+        sensor = readTemperatureAndHumidity();
+        sprintf(result.t_char,"%d", sensor.t);
+        sprintf(result.rh_char,"%f", sensor.rh);
 
         return result;
     }
     return returnError(error);
+}
+
+TMP_RH_raw SHT::periodicFetchData_raw()
+{
+    TMP_RH_raw result;
+    TMP_RH_ErrorCode error = writeCommand(SHT3XD_CMD_FETCH_DATA);
+    if (error == SHT3XD_NO_ERROR)
+    {
+        result = readTemperatureAndHumidity();
+        return result;
+    }
+    return returnError_raw(error);
 }
 
 TMP_RH_ErrorCode SHT::periodicStop(void)
@@ -204,9 +217,9 @@ TMP_RH_ErrorCode SHT::clearAll() {
 }
 
 
-TMP_RH SHT::readTemperatureAndHumidity()
+TMP_RH_raw SHT::readTemperatureAndHumidity()
 {
-    TMP_RH result;
+    TMP_RH_raw result;
     result.t = 0;
     result.rh = 0;
     TMP_RH_ErrorCode error;
@@ -281,8 +294,6 @@ uint8_t SHT::calculateCrc(uint8_t data[])
 TMP_RH SHT::returnError(TMP_RH_ErrorCode error)
 {
     TMP_RH result;
-    result.t = NULL;
-    result.rh = NULL;
 
     result.t_char[0] = 'N';
     result.t_char[1] = 'U';
@@ -295,6 +306,16 @@ TMP_RH SHT::returnError(TMP_RH_ErrorCode error)
     result.rh_char[2] = 'L';
     result.rh_char[3] = 'L';
     result.rh_char[4] = '\0';
+
+    result.error = error;
+    return result;
+}
+
+TMP_RH_raw SHT::returnError_raw(TMP_RH_ErrorCode error)
+{
+    TMP_RH_raw result;
+    result.t = NULL;
+    result.rh = NULL;
 
     result.error = error;
     return result;
