@@ -72,7 +72,7 @@ int CO2::getCO2_Raw()
         {
             int byte = _SoftSerial_CO2->read();
             CO2Response[i] = byte;
-            if (CO2Response[0] != 254)
+            if (CO2Response[0] != 0xFE)
             {
                 return -1; // error code for debugging
             }
