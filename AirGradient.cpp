@@ -61,7 +61,27 @@ void AirGradient::SHT_Init(uint8_t adress, bool displayMsg)
 
 void AirGradient::CO2_Init(int rx_pin, int tx_pin, int baudRate, bool displayMsg)
 {
-  co2 = CO2(rx_pin, tx_pin, baudRate, displayMsg);
+  SoftwareSerial S8_serial = SoftwareSerial(rx_pin, tx_pin);
+  S8_serial.begin(baudRate);
+  co2 = new S8_UART(S8_serial);
+
+  if(displayMsg)
+  {
+    // Check if S8 is available
+    co2->get_firmware_version(CO2sensor.firm_version);
+    int len = strlen(CO2sensor.firm_version);
+    if (len == 0) {
+        Serial.println("SenseAir S8 CO2 sensor not found!");
+    }
+    // Show basic S8 sensor info
+    Serial.println(">>> SenseAir S8 NDIR CO2 sensor <<<");
+    Serial.printf("Firmware version: %s\n", CO2sensor.firm_version);
+    CO2sensor.sensor_id = co2->get_sensor_ID();
+    Serial.print("Sensor ID: 0x"); 
+    printIntToHex(CO2sensor.sensor_id, 4); 
+    Serial.println("");
+    Serial.flush();
+  }
 }
 
 //START MHZ19 FUNCTIONS //

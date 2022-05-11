@@ -13,7 +13,7 @@
 
 #include "PMS.h"
 #include "SHT.h"
-#include "CO2.h"
+#include "S8_UART/src/s8_uart.h"
 
 //MHZ19 CONSTANTS START
 // types of sensors.
@@ -44,7 +44,8 @@ class AirGradient
 
     PMS pms;
     SHT sht;
-    CO2 co2;
+    S8_UART *co2;
+    S8_sensor CO2sensor;
 
     static const uint16_t BAUD_RATE = 9600;
 

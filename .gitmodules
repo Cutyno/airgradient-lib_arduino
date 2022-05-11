@@ -1,0 +1,3 @@
+[submodule "S8_UART"]
+	path = S8_UART
+	url = ../../jcomas/S8_UART
